@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div>
+    <h2>{{ poll.question }}</h2>
+    {% if poll.author == current_user %}
+        <form action="{{ url_for('delete_post', poll_id=poll.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+        </form>
+    {% endif %}
+    <form method="POST" action="">
+        {% for choice in poll.choices %}
+            <div>
+                <label>
+                    <input type="radio" name="choice" value="{{ choice.id }}">
+                    {{ choice.text }} ({{ choice.votes }} votes)
+                </label>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Vote</button>
+    </form>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {{ form.errors }}
+    </div>
+{% endif %}
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.question.label }}<br>
+        {{ form.question(class="form-control") }}
+    </div>
+    <div id="choices">
+    {% for choice_form in form.choices %}
+        <div class="form-group">
+            {{ choice_form.choice.label }}<br>
+            {{ choice_form.choice(class="form-control") }}
+            <button type="button" class="btn btn-danger remove-choice">Remove</button>
+        </div>
+    {% endfor %}
+    </div>
+    <button type="button" id="add-choice" class="btn btn-secondary">Add Choice</button>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+<script>
+    document.getElementById('add-choice').addEventListener('click', function() {
+        let choicesDiv = document.getElementById('choices');
+        let lastChoiceDiv = choicesDiv.children[choicesDiv.children.length - 1];
+        let newChoiceDiv = lastChoiceDiv.cloneNode(true);
+        let numChoices = choicesDiv.children.length; 
+        newChoiceDiv.className = 'form-group';
+        let input = newChoiceDiv.querySelector('input');
+        input.name = input.name.replace(/\d+/, numChoices);
+        input.id = input.id.replace(/\d+/, numChoices);
+        input.value = '';
+        choicesDiv.appendChild(newChoiceDiv);
+        addRemoveListeners();
+    });
+    function addRemoveListeners() {
+    let removeButtons = document.querySelectorAll('.remove-choice');
+    removeButtons.forEach(function(button) {
+        button.onclick = function() {
+            let choicesDiv = document.getElementById('choices');
+            if (choicesDiv.children.length > 2) { // Prevent removing below min_entries
+                button.parentElement.remove();
+                // Re-index all remaining choice inputs
+                let choiceDivs = choicesDiv.querySelectorAll('.form-group');
+                choiceDivs.forEach(function(div, idx) {
+                    let input = div.querySelector('input');
+                    input.name = input.name.replace(/choices-\d+-choice/, 'choices-' + idx + '-choice');
+                    input.id = input.id.replace(/choices-\d+-choice/, 'choices-' + idx + '-choice');
+                });
+            }
+        }
+    });
+}
+addRemoveListeners();
+    addRemoveListeners();
+</script>
+{% endblock content %}

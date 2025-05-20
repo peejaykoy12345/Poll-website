@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+   {% for poll in polls %}
+        <div>
+            <h2><a href="{{ url_for('view_poll', poll_id=poll.id) }}">{{ poll.question }}</a></h2><br>
+            <p>Created by: {{ poll.author.username }}</p>
+            <p>Created on: {{ poll.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        </div>
+    {% endfor %}
+{% endblock content %}
